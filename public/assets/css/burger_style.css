@@ -1,8 +1,7 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-image: url('../img/bBurger.png');
 }
 
-a {
-  color: #00B7FF;
+.panel {
+  background: rgba(200, 54, 54, 0.5);
 }

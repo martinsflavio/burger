@@ -12,58 +12,67 @@ db.connect(err => {
 ///////////////////////////////////////
 
 const Orm = {
-  selectAll: (obj,cb) => {
-    let query = [obj.table];
+  selectAll: (table,cb) => {
+   let query;
 
+    // Query #1
+    query = table;
     db.query('SELECT * FROM ??', query, (err,res) =>{
       if (err) throw err;
       cb(res);
     })
   },
-  insertOne: (obj,cb) =>{
-    let query1 = [obj.table, {burger_name:obj.burger_name}];
+  insertOne: (table,col,val,cb) =>{
+    let query;
+    let commands;
 
-    db.query('SELECT * FROM ?? WHERE ? ', query1, (err,res) =>{
+    // Query #1
+    query = [table,col[0],val[0]];
+    db.query('SELECT * FROM ?? WHERE ?? = ?', query, (err,res) =>{
       // check if burger already exist's
       if (res.length > 0) {
-        cb('Orm already Exist\'s!');
+        cb('Burger '+ burger +' already Exist\'s!');
       } else {
-        // insert new  burger into table
-        let query2 = [
-          obj.table,
-          {
-            burger_name: obj.burger_name,
-            devoured: obj.devoured
-          }
-        ];
-        db.query('INSERT INTO ?? SET ? ', query2, (err,res) =>{
+
+        // Query #2
+        // (TODO) Is this better than having everything as a string?
+        if (val[1]) {
+          commands = 'INSERT INTO ?? (??,??) VALUES (?,?) ';
+          query = [table,col[0],col[1],val[0],val[1]];
+        } else {
+         commands = 'INSERT INTO ?? (??) VALUES (?) ';
+          query = [table,col[0],val[0]];
+        }
+        db.query(commands, query, (err,res) =>{
           if (err) throw err;
+          // Query #3
+          query = [table,'id',res.insertId];
           // return new burger form DB
-          let query3 = [
-            obj.table,
-            {
-              id:res.insertId
-            }
-          ];
-          db.query('SELECT * FROM ?? WHERE ?',query3, (err,res)=>{
+          db.query('SELECT * FROM ?? WHERE ?? = ?',query, (err,res)=>{
             cb(res);
           })
         })
       }
     });
   },
-  updateOne: (obj,cb) => {
-    let query1 = [obj.table, obj.update, obj.where];
+  updateOne: (table,update,where,cb) => {
+    let query;
 
-    db.query('UPDATE ?? SET ? WHERE ?', query1, (err,res) =>{
+    // Query #1
+    query = [table,update,where];
+
+    db.query('UPDATE ?? SET ? WHERE ?', query, (err,res) =>{
       if (err) throw err;
       if(res.changedRows > 0){
-        let query2 = [obj.table, obj.where];
-        db.query('SELECT * FROM ?? WHERE ?', query2, (err,res) =>{
+
+        // Query #2
+        query = [table,where];
+        db.query('SELECT * FROM ?? WHERE ?', query, (err,res) =>{
           cb(res);
         })
       } else {
-        cb('Orm already devoured!');
+        console.log(res);
+        cb('Burger already devoured!');
       }
 
     })
@@ -71,32 +80,3 @@ const Orm = {
 };
 
 module.exports = Orm;
-
-//////// SELECT ALL /////////////
-/*const query = {
-  table: 'burgers'
-};
-Orm.selectAll(query, burgers =>{
-  console.log(burgers);
-});*/
-
-////////// INSERT ONE //////////
-/*const  query = {
-  table: 'burgers',
-  burger_name: 'x-minhoca',
-  devoured: false
-};
-Orm.insertOne(query, burger => {
-  console.log(burger);
-});*/
-
-///////// UPDATE ONE ////////////
-/*const query = {
-  table: 'burgers',
-  update: {devoured:true},
-  where: {id:9}
-};
-
-Orm.updateOne(query, burger => {
-  console.log(burger)
-});*/
