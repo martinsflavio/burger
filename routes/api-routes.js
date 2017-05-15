@@ -14,15 +14,23 @@ router.post('/new', (req, res) => {
   })
 });
 
-router.put('/:id', (req, res) => {
+
+
+
+
+router.post('/:id', (req, res) => {
   let burger = {
     update: {devoured:parseInt(req.body.devoured)},
     where: {where:{id:parseInt(req.params.id)}}
   };
-  db.Burgers.update(burger.update,burger.where).then(data => {
-    res.redirect('/');
+
+  db.Clients.create({name:req.body.client_name,BurgerId:req.params.id}).then(client =>{
+    db.Burgers.update(burger.update,burger.where).then(data => {
+      res.redirect('/');
+    });
   });
 });
+
 
 
 module.exports = router;

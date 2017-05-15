@@ -10,31 +10,20 @@
 					<h2>Burgers Ready</h2>
 				</div>
 				<div class="panel-body">
-					<table class="table">
-						<thead>
-						<tr>
-							<th>ID</th>
-							<th>Burger</th>
-							<th>Devour</th>
-						</tr>
-						</thead>
-						<tbody>
+					<ul>
 						{{#each burgers}}
-							{{#unless this.devoured}}
-								<tr>
-									<td>{{this.id}}</td>
-									<td>{{this.burger_name}}</td>
-									<td>
-										<form class="form-inline" action="/api/{{this.id}}?_method=PUT" method="POST">
-											<input type="hidden" name="devoured" value="1">
-											<button class="btn btn-success" type="submit">Devour</button>
-										</form>
-									</td>
-								</tr>
-							{{/unless}}
+							<li>
+							{{#if this.devoured}}
+									{{this.id}} .
+									{{this.burger_name}} => (eaten by
+									{{#each this.Clients}}
+											{{this.name}})
+									{{/each}}
+							{{/if}}
+							</li>
 						{{/each}}
-						</tbody>
-					</table>
+					</ul>
+
 				</div>
 			</div>
 		</div>
@@ -56,18 +45,20 @@
 						</thead>
 						<tbody>
 						{{#each burgers}}
-							{{#if this.devoured}}
-								<tr>
-									<td>{{this.id}}</td>
-									<td>{{this.burger_name}}</td>
-									<td>
-										<form class="form-inline" action="/api/{{this.id}}?_method=PUT" method="POST">
-											<input type="hidden" name="devoured" value="0">
-											<button class="btn btn-warning" type="submit">Order</button>
-										</form>
-									</td>
-								</tr>
-							{{/if}}
+							{{#unless this.devoured}}
+							<tr>
+								<td>{{this.id}}</td>
+								<td>{{this.burger_name}}</td>
+								<td>
+									<form class="form-inline" action="/api/{{this.id}}" method="POST">
+										<label for="client">Client:</label>
+										<input type="text" id="client" name="client_name">
+										<input type="hidden" name="devoured" value="1">
+										<button class="btn btn-warning" type="submit">Devour</button>
+									</form>
+								</td>
+							</tr>
+								{{/unless}}
 						{{/each}}
 						</tbody>
 					</table>
