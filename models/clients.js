@@ -1,4 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
+  // Same comments here as in your `burgers.js` model file
+
   let Clients;
   let schema;
   let association;

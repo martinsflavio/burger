@@ -20,12 +20,17 @@ router.post('/new', (req, res) => {
 
 router.post('/:id', (req, res) => {
   let burger = {
-    update: {devoured:parseInt(req.body.devoured)},
-    where: {where:{id:parseInt(req.params.id)}}
+    // luckily, sequelize is smart enough to do some type casting under the hood, so there's no
+    // need to use parseInt here.
+    update: { devoured: req.body.devoured },
+    where: { where:{ id: req.params.id }}
   };
 
-  db.Clients.create({name:req.body.client_name,BurgerId:req.params.id}).then(client =>{
-    db.Burgers.update(burger.update,burger.where).then(data => {
+  // Readability preference of mine is to opt for white space between arguments, obeject properties, etc.
+  // Doesn't make a functional difference, but I find it much easier to read through code and spot potential
+  // typos, bugs, etc.
+  db.Clients.create({ name: req.body.client_name, BurgerId: req.params.id }).then(client =>{
+    db.Burgers.update(burger.update, burger.where).then(data => {
       res.redirect('/');
     });
   });

@@ -12,15 +12,16 @@
 				<div class="panel-body">
 					<ul>
 						{{#each burgers}}
-							<li>
+							<!-- wanna make sure the li element is inside the conditional. Otherwise, you can end up with a bunch of blank bullet points. -->
 							{{#if this.devoured}}
+								<li>
 									{{this.id}} .
 									{{this.burger_name}} => (eaten by
 									{{#each this.Clients}}
 											{{this.name}})
 									{{/each}}
+								</li>
 							{{/if}}
-							</li>
 						{{/each}}
 					</ul>
 
